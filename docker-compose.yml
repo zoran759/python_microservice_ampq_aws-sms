@@ -5,7 +5,7 @@ services:
           context: ./
           dockerfile: ./docker/Dockerfile
         tty: true
-        container_name: python-service-micro_aws-sms
+        container_name: python_micro_service_aws-sms
         networks:
           - docker-shared-services
         volumes:
