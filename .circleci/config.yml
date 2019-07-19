@@ -14,24 +14,8 @@ jobs:
           name: Perform ports mapping and setting environment
           command: |
               chmod +x ./mapping_docker_env.sh && ./mapping_docker_env.sh
-      - run:
-          name: Copy app files to the server
-          command: |
-              scp -r ./app $SSH_USER_VPS@$SSH_HOST_VPS:$PROJECT_DIR
-              scp -r ./docker/Dockerfile_deploy ./docker/requirements.txt $SSH_USER_VPS@$SSH_HOST_VPS:$PROJECT_DIR
-              cp ./docker-compose.deploy.yml ./docker-compose.yml && scp -r ./docker-compose.yml $SSH_USER_VPS@$SSH_HOST_VPS:$PROJECT_DIR
-      - run:
-          name: Login into Docker Hub account
-          command: ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker login -u $DOCKER_USER -p $DOCKER_PASS"
-      - run:
-          name: Recreate docker containers
-          command: |
-              ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker-compose pull"
-              ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker-compose down"
-              ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker-compose up -d --no-deps --force-recreate"
-      - run:
-          name: Clean not used docker files
-          command: ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker image prune -a -f"
+              cat .app/.env
+      
 
 workflows:
   version: 2
