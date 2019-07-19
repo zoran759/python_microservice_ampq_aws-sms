@@ -3,7 +3,7 @@ services:
     python-service:
         build:
           context: ./
-          dockerfile: ./docker/Dockerfile_deploy
+          dockerfile: ./Dockerfile_deploy
         tty: true
         container_name: python_micro_service_aws_sms
         networks:
