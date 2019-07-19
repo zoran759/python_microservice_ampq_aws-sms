@@ -1,1 +1,18 @@
+version: "3.5"
+services:
+    python-service:
+        build:
+          context: ./
+          dockerfile: ./docker/Dockerfile_deploy
+        tty: true
+        container_name: python_micro_service_aws_sms
+        networks:
+          - docker-shared-services
+        volumes:
+            - ./app:/app
+        environment:
+            FLASK_ENV: development
 
+networks:
+  docker-shared-services:
+    external: true
