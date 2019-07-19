@@ -11,11 +11,9 @@ jobs:
             - "0c:33:a8:8c:40:06:fa:ae:13:c8:63:a6:e7:52:a1:b0"
       - checkout
       - run:
-          name: Perform ports mapping
+          name: Perform ports mapping and setting environment
           command: |
-              sed -e "s/\${AWS_ACCESS_KEY_ID}/${DEV_AWS_ACCESS_KEY_ID}/g;
-                       s/\${AWS_SECRET_ACCESS_KEY}/${DEV_AWS_SECRET_ACCESS_KEY}/g;
-                       s/\${AWS_DEFAULT_REGION}/${DEV_AWS_DEFAULT_REGION}/g;"  ./app/.env.deploy > ./app/.env
+              ./mapping_docker_env.sh
       - run:
           name: Copy app files to the server
           command: |
