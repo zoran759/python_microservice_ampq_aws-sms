@@ -14,7 +14,7 @@ jobs:
           name: Perform ports mapping and setting environment
           command: |
               chmod +x ./mapping_docker_env.sh && ./mapping_docker_env.sh
-              cat .app/.env
+              cat ./app/.env
       
 
 workflows:
