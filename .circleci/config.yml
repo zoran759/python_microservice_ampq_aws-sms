@@ -35,7 +35,6 @@ jobs:
           name: Clean not used docker files
           command: ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker image prune -a -f"
 
-
 workflows:
   version: 2
   deploy:
