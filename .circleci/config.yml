@@ -13,7 +13,7 @@ jobs:
       - run:
           name: Perform ports mapping and setting environment
           command: |
-              ./mapping_docker_env.sh
+              chmod +x ./mapping_docker_env.sh && ./mapping_docker_env.sh
       - run:
           name: Copy app files to the server
           command: |
