@@ -1,0 +1,47 @@
+version: 2.1
+
+jobs:
+  deploy:
+    machine:
+      enabled: true
+    working_directory: ~/python_microservice_ampq_aws-sms
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "0c:33:a8:8c:40:06:fa:ae:13:c8:63:a6:e7:52:a1:b0"
+      - checkout
+      - run:
+          name: Perform ports mapping
+          command: |
+              sed -e "s/\${AWS_ACCESS_KEY_ID}/${AWS_ACCESS_KEY_ID}/g;
+                       s/\${AWS_SECRET_ACCESS_KEY}/${AWS_SECRET_ACCESS_KEY}/g;
+                       s/\${AWS_DEFAULT_REGION}/${AWS_DEFAULT_REGION}/g;"  ./app/.env.deploy > ./app/.env
+      - run:
+          name: Copy app files to the server
+          command: |
+              scp -r ./app $SSH_USER_VPS@$SSH_HOST_VPS:$PROJECT_DIR
+              scp -r ./docker/Dockerfile_deploy ./docker/requirements.txt $SSH_USER_VPS@$SSH_HOST_VPS:$PROJECT_DIR
+              cp ./docker-compose.deploy.yml ./docker-compose.yml && scp -r ./docker-compose.yml $SSH_USER_VPS@$SSH_HOST_VPS:$PROJECT_DIR
+      - run:
+          name: Login into Docker Hub account
+          command: ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker login -u $DOCKER_USER -p $DOCKER_PASS"
+      - run:
+          name: Recreate docker containers
+          command: |
+              ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker-compose pull"
+              ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker-compose down"
+              ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker-compose up -d --no-deps --force-recreate"
+      - run:
+          name: Clean not used docker files
+          command: ssh $SSH_USER_VPS@$SSH_HOST_VPS "cd $PROJECT_DIR && docker image prune -a -f"
+
+
+workflows:
+  version: 2
+  deploy:
+    jobs:
+      - deploy:
+          filters:
+            branches:
+              only:
+                - master
